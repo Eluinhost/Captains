@@ -1,5 +1,9 @@
 package com.publicuhc.captains;
 
+import org.bukkit.entity.Player;
+
+import java.util.List;
+
 public class DraftMode
 {
     private boolean isInDraftMode = false;
@@ -17,7 +21,7 @@ public class DraftMode
      *
      * @throws java.lang.IllegalStateException if already in draft mode
      */
-    public void startDraftMode()
+    public void startDraftMode(List<Player> captains, List<Player> picks, int teamSize)
     {
         if(isInDraftMode()) {
             throw new IllegalStateException();

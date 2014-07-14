@@ -8,6 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class StartDraftCommand extends DraftModeCommand
@@ -67,6 +69,8 @@ public class StartDraftCommand extends DraftModeCommand
                 sender.sendMessage(ChatColor.RED + "Player "+arg+" is not online!");
                 return true;
             }
+
+            captainList.add(player);
         }
 
         if(captainList.size() < 2) {
@@ -76,13 +80,35 @@ public class StartDraftCommand extends DraftModeCommand
 
         List<Player> availablePlayers = availableForPick();
 
-        //TODO remove captains from available players
+        Iterator<Player> playerIterator = availablePlayers.iterator();
 
-        //TODO check if team size is -1 and auto set it
+        while(playerIterator.hasNext()) {
+            if(captainList.contains(playerIterator.next()))
+                playerIterator.remove();
+        }
 
-        //TODO start draft mode with the provided captains and player list
+        int toRemove = 0;
+        if(teamSize < 1) {
+            if(availablePlayers.size() < captainList.size()) {
+                sender.sendMessage(ChatColor.RED + "There must be at least as many picks as there are captains");
+                return true;
+            }
 
-        draftMode.startDraftMode();
+            toRemove = availablePlayers.size() % captainList.size();
+            teamSize = (availablePlayers.size() - toRemove) / captainList.size();
+        } else {
+            toRemove = availablePlayers.size() - (captainList.size() * teamSize);
+        }
+
+        if(addAll) {
+            toRemove = 0;
+        }
+
+        Collections.shuffle(availablePlayers);
+        availablePlayers = availablePlayers.subList(toRemove, availablePlayers.size() - 1);
+
+        draftMode.startDraftMode(captainList, availablePlayers, teamSize);
+
         sender.sendMessage(ChatColor.GOLD + "Draft mode started");
         return true;
     }
