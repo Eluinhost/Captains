@@ -49,6 +49,14 @@ public class StartDraftCommandTest
         when(sender.hasPermission("captains.draft.startdraft")).thenReturn(true);
     }
 
+    //TODO test for -f and -t=team_size
+
+    //TODO test for available players sizes
+
+    //TODO test for random player removal
+
+    //TODO test valid command
+
     @Test
     public void testInvalidCaptainName()
     {
