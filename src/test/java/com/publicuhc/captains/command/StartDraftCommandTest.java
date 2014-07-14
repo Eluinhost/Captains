@@ -2,7 +2,6 @@ package com.publicuhc.captains.command;
 
 import com.publicuhc.captains.DraftMode;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.junit.Before;
@@ -14,10 +13,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.startsWith;
-import static org.mockito.Mockito.never;
+import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
@@ -40,20 +39,18 @@ public class StartDraftCommandTest
     }
 
     @Test
-    public void testPermission()
+    public void testDraftMode()
     {
         Player player = mock(Player.class);
         when(player.hasPermission("captains.draft.startdraft")).thenReturn(true);
 
-        //hacky little thing to exit after perm check
-        when(draftMode.isInDraftMode()).thenThrow(new IllegalStateException());
-        try {
-            command.onCommand(player, pluginCommand, "", new String[]{});
-        }catch(IllegalStateException ignored) {}
+        when(draftMode.isInDraftMode()).thenReturn(true);
 
-        verify(player, times(1)).hasPermission("captains.draft.startdraft");
+        command.onCommand(player, pluginCommand, "", new String[]{});
 
-        verify(player, never()).sendMessage(startsWith(ChatColor.RED.toString()));
+        verify(player, times(1)).sendMessage(contains("already in progress"));
+        verify(draftMode).isInDraftMode();
+        verifyNoMoreInteractions(draftMode);
     }
 
     @Test
@@ -66,8 +63,9 @@ public class StartDraftCommandTest
 
         verify(player, times(1)).hasPermission("captains.draft.startdraft");
 
-        verify(player, times(1)).sendMessage(startsWith(ChatColor.RED.toString()));
+        verify(player, times(1)).sendMessage(contains("do not have permission"));
         verifyNoMoreInteractions(player);
+        verifyNoMoreInteractions(draftMode);
     }
 
     @Test
