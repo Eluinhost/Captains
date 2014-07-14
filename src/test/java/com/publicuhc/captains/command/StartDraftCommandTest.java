@@ -25,6 +25,7 @@ public class StartDraftCommandTest
 {
     private StartDraftCommand command;
 
+    private Player sender;
     private DraftMode draftMode;
     private Command pluginCommand;
 
@@ -36,19 +37,19 @@ public class StartDraftCommandTest
 
         pluginCommand = mock(Command.class);
         when(pluginCommand.getName()).thenReturn("startdraft");
+
+        sender = mock(Player.class);
+        when(sender.hasPermission("captains.draft.startdraft")).thenReturn(true);
     }
 
     @Test
     public void testDraftMode()
     {
-        Player player = mock(Player.class);
-        when(player.hasPermission("captains.draft.startdraft")).thenReturn(true);
-
         when(draftMode.isInDraftMode()).thenReturn(true);
 
-        command.onCommand(player, pluginCommand, "", new String[]{});
+        command.onCommand(sender, pluginCommand, "", new String[]{});
 
-        verify(player, times(1)).sendMessage(contains("already in progress"));
+        verify(sender, times(1)).sendMessage(contains("already in progress"));
         verify(draftMode).isInDraftMode();
         verifyNoMoreInteractions(draftMode);
     }
@@ -56,15 +57,12 @@ public class StartDraftCommandTest
     @Test
     public void testNoPermission()
     {
-        Player player = mock(Player.class);
-        when(player.hasPermission("captains.draft.startdraft")).thenReturn(false);
+        command.onCommand(sender, pluginCommand, "", new String[]{});
 
-        command.onCommand(player, pluginCommand, "", new String[]{});
+        verify(sender, times(1)).hasPermission("captains.draft.startdraft");
 
-        verify(player, times(1)).hasPermission("captains.draft.startdraft");
-
-        verify(player, times(1)).sendMessage(contains("do not have permission"));
-        verifyNoMoreInteractions(player);
+        verify(sender, times(1)).sendMessage(contains("do not have permission"));
+        verifyNoMoreInteractions(sender);
         verifyNoMoreInteractions(draftMode);
     }
 
