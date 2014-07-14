@@ -16,9 +16,30 @@ commands:
     description: List all unpicked players
     usage: /<command>
     aliases: [captainspicklist]
+  enddraft:
+    description: Forces the draft to end
+    usage: /<command>
+    aliases: [captainsenddraft]
+  addpick:
+    description: Adds a player to the pick list
+    usage: /<command> player_name
+    aliases: [captainsaddpick]
+  removepick:
+    description: Removes a player from the pick list
+    usage: /<command> player_name
+    aliases: [captainsremovepick]
 permissions:
   captains.draft.start:
     description: Allows usage of the start draft command
+    default: op
+  captains.draft.start:
+    description: Allows usage of the end draft command
+    default: op
+  captains.draft.addpick:
+    description: Allows usage of the add pick command
+    default: op
+  captains.draft.removepick:
+    description: Allows usage of the remove pick command
     default: op
   captains.draft.pick:
     description: Allows usage of the pick command (restricted to captains in draft stage)
