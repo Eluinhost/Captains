@@ -2,6 +2,8 @@ package com.publicuhc.captains.command;
 
 import com.publicuhc.captains.DraftMode;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,9 +14,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.startsWith;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
@@ -24,12 +27,47 @@ public class StartDraftCommandTest
     private StartDraftCommand command;
 
     private DraftMode draftMode;
+    private Command pluginCommand;
 
     @Before
     public void onStartup()
     {
         draftMode = mock(DraftMode.class);
         command = new StartDraftCommand(draftMode);
+
+        pluginCommand = mock(Command.class);
+        when(pluginCommand.getName()).thenReturn("startdraft");
+    }
+
+    @Test
+    public void testPermission()
+    {
+        Player player = mock(Player.class);
+        when(player.hasPermission("captains.draft.startdraft")).thenReturn(true);
+
+        //hacky little thing to exit after perm check
+        when(draftMode.isInDraftMode()).thenThrow(new IllegalStateException());
+        try {
+            command.onCommand(player, pluginCommand, "", new String[]{});
+        }catch(IllegalStateException ignored) {}
+
+        verify(player, times(1)).hasPermission("captains.draft.startdraft");
+
+        verify(player, never()).sendMessage(startsWith(ChatColor.RED.toString()));
+    }
+
+    @Test
+    public void testNoPermission()
+    {
+        Player player = mock(Player.class);
+        when(player.hasPermission("captains.draft.startdraft")).thenReturn(false);
+
+        command.onCommand(player, pluginCommand, "", new String[]{});
+
+        verify(player, times(1)).hasPermission("captains.draft.startdraft");
+
+        verify(player, times(1)).sendMessage(startsWith(ChatColor.RED.toString()));
+        verifyNoMoreInteractions(player);
     }
 
     @Test
