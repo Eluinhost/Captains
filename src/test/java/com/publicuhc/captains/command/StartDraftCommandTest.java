@@ -28,7 +28,9 @@ public class StartDraftCommandTest
     private Player sender;
     private DraftMode draftMode;
     private Command pluginCommand;
+    private Player ghowden;
 
+    @SuppressWarnings("deprecation")
     @Before
     public void onStartup()
     {
@@ -38,8 +40,31 @@ public class StartDraftCommandTest
         pluginCommand = mock(Command.class);
         when(pluginCommand.getName()).thenReturn("startdraft");
 
+        mockStatic(Bukkit.class);
+        ghowden = mock(Player.class);
+        when(Bukkit.getPlayer("ghowden")).thenReturn(ghowden);
+        when(Bukkit.getPlayer("Eluinhost")).thenReturn(null);
+
         sender = mock(Player.class);
         when(sender.hasPermission("captains.draft.startdraft")).thenReturn(true);
+    }
+
+    @Test
+    public void testInvalidCaptainName()
+    {
+        command.onCommand(sender, pluginCommand, "", new String[]{"ghowden", "Eluinhost"});
+        command.onCommand(sender, pluginCommand, "", new String[]{"Eluinhost", "ghowden"});
+
+        verify(sender, times(2)).sendMessage(contains("provide at least 2 captains"));
+    }
+
+    @Test
+    public void testNotEnoughCaptains()
+    {
+        command.onCommand(sender, pluginCommand, "", new String[]{});
+        command.onCommand(sender, pluginCommand, "", new String[]{"ghowden"});
+
+        verify(sender, times(2)).sendMessage(contains("provide at least 2 captains"));
     }
 
     @Test
