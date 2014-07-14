@@ -4,4 +4,28 @@ version: 1.0
 description: Captains draft mode
 author: ghowden/Eluinhost
 commands:
+  startdraft:
+    description: Start draft mode
+    usage: /<command> [-t=team_size] [-r] player1,player2,player3,player4,player5
+    aliases: [captainsstartdraft]
+  pick:
+    description: Pick a player
+    usage: /<command> player_name
+    aliases: [captainspick]
+  picklist:
+    description: List all unpicked players
+    usage: /<command>
+    aliases: [captainspicklist]
 permissions:
+  captains.draft.start:
+    description: Allows usage of the start draft command
+    default: op
+  captains.draft.pick:
+    description: Allows usage of the pick command (restricted to captains in draft stage)
+    default: true
+  captains.draft.pick:
+    description: Allows usage of the picklist command
+    default: true
+  captains.draft.spectate:
+    description: Won't be considered as online for usage in the plugin (immune to picks, captain, not count to player count in draft start)
+    default: false
