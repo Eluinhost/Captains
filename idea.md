@@ -13,7 +13,7 @@ The captains then choose 1 player from the pick list to be on their team in the 
 
 It then repeats in reverse order: `r -> o -> l -> j -> a`
 
-It then continues in forward->backward picks until no players are left on the pick list.
+It then continues in forward->backward picks until no players are left on the pick list or all teams are full.
 
 End draft stage.
 

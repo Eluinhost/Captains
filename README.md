@@ -14,9 +14,9 @@ Starts the draft stage.
 
 `-t=teamsize` - optional, max team size to created. If ommitted attempts to make the largest teams available.
 
-`-r` - optional, if set will remove random players from the pick list to make the pick list the correct size.
-e.g. If there are 5 captains and a team size of 5 with 26 people online 1 player will be remove at random from the list.
-If ommitted the command will fail and tell you that there are too many players online.
+`-f` - optional, if set will add all online players to the pick list. Any left over at the end of draft will not be in a team.
+e.g. If there are 5 captains and a team size of 5 with 26 people online 1 player will be left at the end of draft.
+If ommitted a random players will be removed from the list until the correct amount are in it.
 
 `player1 player2 player3 player4 player5` - List of captains names who will run the draft
 

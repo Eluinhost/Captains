@@ -6,7 +6,7 @@ author: ghowden/Eluinhost
 commands:
   startdraft:
     description: Start draft mode
-    usage: /<command> [-t=team_size] [-r] player1,player2,player3,player4,player5
+    usage: /<command> [-t=team_size] [-f] player1,player2,player3,player4,player5
     aliases: [captainsstartdraft]
   pick:
     description: Pick a player
