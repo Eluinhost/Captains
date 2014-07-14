@@ -8,7 +8,7 @@ Commands
 
 Starts the draft stage.
 
-`/startdraft [-t=team_size] [-r] player1 player2 player3 player4 player5`
+`/startdraft [-t=team_size] [-f] player1 player2 player3 player4 player5`
 
 #### Parameters
 
