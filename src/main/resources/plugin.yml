@@ -1,0 +1,7 @@
+name: Captains
+main: com.publicuhc.captains.CaptainsPlugin
+version: 1.0
+description: Captains draft mode
+author: ghowden/Eluinhost
+commands:
+permissions:
