@@ -8,8 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 public class StartDraftCommand extends DraftModeCommand
@@ -94,12 +92,13 @@ public class StartDraftCommand extends DraftModeCommand
      */
     protected List<Player> availableForPick()
     {
-        List<Player> playerList = Arrays.asList(Bukkit.getOnlinePlayers());
+        List<Player> playerList = new ArrayList();
 
-        Iterator<Player> playerIterator = playerList.iterator();
-        while(playerIterator.hasNext()) {
-            if(playerIterator.next().hasPermission("captains.draft.spectate")) {
-                playerIterator.remove();
+        Player[] allPlayers = Bukkit.getOnlinePlayers();
+
+        for(Player player : allPlayers) {
+            if(!player.hasPermission("captains.draft.spectate")) {
+                playerList.add(player);
             }
         }
 
