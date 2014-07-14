@@ -15,6 +15,8 @@ It then repeats in reverse order: `r -> o -> l -> j -> a`
 
 It then continues in forward->backward picks until no players are left on the pick list or all teams are full.
 
+At any point of the draft players can be added/removed to the list with commands, if removing a player would cause the list too be too small deny it.
+
 End draft stage.
 
 _must be able to handle/work out player disconnects (timeout player and pull in any spare players not in the pick list?)_

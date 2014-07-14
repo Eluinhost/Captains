@@ -26,6 +26,47 @@ If ommitted a random players will be removed from the list until the correct amo
 
 `captains.draft.spectate` - Player cannot be picked, chosen as captain and wont count towards player count when starting draft, default false
 
+### End Draft
+
+Forces the draft to end
+
+`/enddraft`
+
+#### Relevant Permissions
+
+`captains.draft.end` - Allows use of the command, default OP
+
+
+### Add pick
+
+Adds a player to the pick list
+
+`/addpick player_name`
+
+#### Parameters
+
+`player_name` - The player to add to the pick list
+
+#### Relevant Permissions
+
+`captains.draft.addpick` - Allows use of the command, default OP
+
+`captains.draft.spectate` - Cannot be added to pick list, default false
+
+### Remove pick
+
+Removes a player from the pick list, if the pick list is then too small to use will fail.
+
+`/removepick player_name`
+
+#### Parameters
+
+`player_name` - The player name to remove from the pick list
+
+#### Relevant Permissions
+
+`captains.draft.remvoepick` - Allows use of the command, default OP
+
 ### Pick Player
 
 Picks a player for your team. Restricted to Captains during their pick in the draft stage
