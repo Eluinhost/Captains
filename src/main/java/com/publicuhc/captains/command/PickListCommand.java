@@ -1,4 +1,4 @@
-package com.publicuhc.captains.Commands;
+package com.publicuhc.captains.command;
 
 import com.publicuhc.captains.DraftMode;
 import org.bukkit.command.Command;

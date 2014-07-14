@@ -1,6 +1,6 @@
 package com.publicuhc.captains;
 
-import com.publicuhc.captains.Commands.*;
+import com.publicuhc.captains.command.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CaptainsPlugin extends JavaPlugin

@@ -1,12 +1,12 @@
-package com.publicuhc.captains.Commands;
+package com.publicuhc.captains.command;
 
 import com.publicuhc.captains.DraftMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class PickCommand extends DraftModeCommand
+public class EndDraftCommand extends DraftModeCommand
 {
-    public PickCommand(DraftMode draftMode)
+    public EndDraftCommand(DraftMode draftMode)
     {
         super(draftMode);
     }
