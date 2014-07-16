@@ -111,7 +111,7 @@ public class StartDraftCommand extends DraftModeCommand
         }
 
         Collections.shuffle(availablePlayers);
-        availablePlayers = availablePlayers.subList(toRemove, availablePlayers.size() - 1);
+        availablePlayers = availablePlayers.subList(toRemove, availablePlayers.size());
 
         draftMode.startDraftMode(captainList, availablePlayers, teamSize);
 
