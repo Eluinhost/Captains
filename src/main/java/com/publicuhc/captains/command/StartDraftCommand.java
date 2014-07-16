@@ -53,8 +53,8 @@ public class StartDraftCommand extends DraftModeCommand
                 try {
                     teamSize = Integer.parseInt(arg);
 
-                    //check for positive > 0 value
-                    if(teamSize < 1)
+                    //check for positive > 0 value and require teams of more than 1 player (the captian)
+                    if(teamSize <= 1)
                         throw new NumberFormatException();
                 } catch (NumberFormatException ex) {
                     sender.sendMessage(ChatColor.RED + "Must provide a valid number for the team size");
@@ -89,7 +89,7 @@ public class StartDraftCommand extends DraftModeCommand
         }
 
         int toRemove = 0;
-        if(teamSize < 1) {
+        if(teamSize < 0) {
             if(availablePlayers.size() < captainList.size()) {
                 sender.sendMessage(ChatColor.RED + "There must be at least as many picks as there are captains");
                 return true;
