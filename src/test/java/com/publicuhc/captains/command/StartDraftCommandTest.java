@@ -43,7 +43,7 @@ public class StartDraftCommandTest
         when(sender.hasPermission("captains.draft.startdraft")).thenReturn(true);
     }
 
-    //TODO test for -f and -t=team_size
+    //TODO test for -f
 
     /**
      * Makes x amount of player mocks and setups up Bukkit.getPlayer("playerx") and Bukkit.getOnlinePlayers() to return all.
@@ -77,7 +77,28 @@ public class StartDraftCommandTest
         verify(sender, times(1)).sendMessage(contains("must be at least as many picks"));
     }
 
-    //TODO test for available players sizes
+    @Test
+    public void testTooLargeTeams()
+    {
+        //setup 14 players, 3 captains teams of 5
+        setupOnlinePlayers(14);
+
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "player1", "player2", "-t=5"});
+
+        verify(sender, times(1)).sendMessage(contains("enough people online"));
+    }
+
+    @Test
+    public void testTeamSizeInvalid()
+    {
+        setupOnlinePlayers(1);
+
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "-t=asdjkh"});
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "-t=0"});
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "-t=-1"});
+
+        verify(sender, times(3)).sendMessage(contains("provide a valid number"));
+    }
 
     //TODO test for random player removal
 
