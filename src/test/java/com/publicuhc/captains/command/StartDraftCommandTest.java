@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -14,10 +15,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.contains;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.*;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class})
@@ -42,8 +44,6 @@ public class StartDraftCommandTest
         sender = mock(Player.class);
         when(sender.hasPermission("captains.draft.startdraft")).thenReturn(true);
     }
-
-    //TODO test for -f
 
     /**
      * Makes x amount of player mocks and setups up Bukkit.getPlayer("playerx") and Bukkit.getOnlinePlayers() to return all.
@@ -95,14 +95,40 @@ public class StartDraftCommandTest
 
         command.onCommand(sender, pluginCommand, "", new String[]{"player0", "-t=asdjkh"});
         command.onCommand(sender, pluginCommand, "", new String[]{"player0", "-t=0"});
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "-t=1"});
         command.onCommand(sender, pluginCommand, "", new String[]{"player0", "-t=-1"});
 
-        verify(sender, times(3)).sendMessage(contains("provide a valid number"));
+        verify(sender, times(4)).sendMessage(contains("provide a valid number"));
     }
 
-    //TODO test for random player removal
+    @Test
+    public void testAutoTeamSize()
+    {
+        setupOnlinePlayers(10);
 
-    //TODO test valid command
+        //auto team size = 3 teams of 3
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "player1", "player2"});
+
+        //availabe picks = 3 teams of 3 = 9 players, minus 3 captains = 6
+        verify(draftMode).startDraftMode(argThat(new IsListOfSize(3)), argThat(new IsListOfSize(6)), eq(3));
+
+        setupOnlinePlayers(13);
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "player1", "player2"});
+
+        //available picks = 3 teams of 4 = 12 players, minus 3 captains = 9
+        verify(draftMode).startDraftMode(argThat(new IsListOfSize(3)), argThat(new IsListOfSize(9)), eq(4));
+    }
+
+    @Test
+    public void testChosenTeamSize()
+    {
+        setupOnlinePlayers(10);
+
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "player1", "player2", "-t=2"});
+
+        //available picks = 3 teams of 2 = 6 players, minus 3 captains = 3
+        verify(draftMode).startDraftMode(argThat(new IsListOfSize(3)), argThat(new IsListOfSize(3)), eq(2));
+    }
 
     @Test
     public void testInvalidCaptainName()
@@ -171,6 +197,15 @@ public class StartDraftCommandTest
             verifyNoMoreInteractions(player);
         }
     }
-
-
 }
+class IsListOfSize extends ArgumentMatcher<List>
+{
+    private int size;
+    public IsListOfSize(int size) {
+        this.size = size;
+    }
+    public boolean matches(Object list) {
+        return ((List) list).size() == size;
+    }
+}
+
