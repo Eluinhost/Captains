@@ -102,6 +102,20 @@ public class StartDraftCommandTest
     }
 
     @Test
+    public void testAddAll()
+    {
+        setupOnlinePlayers(10);
+
+        //auto team size = 3, so available should be 7 with team size 3
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "player1", "player2", "-f"});
+        verify(draftMode).startDraftMode(argThat(new IsListOfSize(3)), argThat(new IsListOfSize(7)), eq(3));
+
+        //team size = 2, available = 8
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "player1", "-t=2", "-f"});
+        verify(draftMode).startDraftMode(argThat(new IsListOfSize(2)), argThat(new IsListOfSize(8)), eq(2));
+    }
+
+    @Test
     public void testAutoTeamSize()
     {
         setupOnlinePlayers(10);
