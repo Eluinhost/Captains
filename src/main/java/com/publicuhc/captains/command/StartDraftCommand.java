@@ -96,7 +96,7 @@ public class StartDraftCommand extends DraftModeCommand
             }
 
             toRemove = availablePlayers.size() % captainList.size();
-            teamSize = (availablePlayers.size() - toRemove) / captainList.size();
+            teamSize = (availablePlayers.size() - toRemove) / captainList.size() + 1;
         } else {
             toRemove = availablePlayers.size() - (captainList.size() * teamSize);
 
