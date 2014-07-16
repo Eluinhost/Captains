@@ -60,6 +60,7 @@ public class StartDraftCommand extends DraftModeCommand
                     sender.sendMessage(ChatColor.RED + "Must provide a valid number for the team size");
                     return true;
                 }
+                continue;
             }
 
             //must be a player (captain) name
