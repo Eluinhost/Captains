@@ -28,7 +28,6 @@ public class StartDraftCommandTest
     private Player sender;
     private DraftMode draftMode;
     private Command pluginCommand;
-    private Player ghowden;
 
     @SuppressWarnings("deprecation")
     @Before
@@ -40,16 +39,43 @@ public class StartDraftCommandTest
         pluginCommand = mock(Command.class);
         when(pluginCommand.getName()).thenReturn("startdraft");
 
-        mockStatic(Bukkit.class);
-        ghowden = mock(Player.class);
-        when(Bukkit.getPlayer("ghowden")).thenReturn(ghowden);
-        when(Bukkit.getPlayer("Eluinhost")).thenReturn(null);
-
         sender = mock(Player.class);
         when(sender.hasPermission("captains.draft.startdraft")).thenReturn(true);
     }
 
     //TODO test for -f and -t=team_size
+
+    /**
+     * Makes x amount of player mocks and setups up Bukkit.getPlayer("playerx") and Bukkit.getOnlinePlayers() to return all.
+     * Players are named "player" + index (e.g. player0 - player19 for amount 20)
+     * @param amount the amount to create
+     * @return the created player list
+     */
+    @SuppressWarnings("deprecation")
+    private Player[] setupOnlinePlayers(int amount)
+    {
+        mockStatic(Bukkit.class);
+        Player[] online = new Player[amount];
+        for(int i = 0; i<amount; i++) {
+            Player player = mock(Player.class);
+            when(player.getName()).thenReturn("player"+i);
+            when(Bukkit.getPlayer("player"+i)).thenReturn(player);
+            online[i] = player;
+        }
+        when(Bukkit.getOnlinePlayers()).thenReturn(online);
+
+        return online;
+    }
+
+    @Test
+    public void testNotEnoughPicks()
+    {
+        //3 of 5 as captains, auto team size
+        setupOnlinePlayers(5);
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "player1", "player2"});
+
+        verify(sender, times(1)).sendMessage(contains("must be at least as many picks"));
+    }
 
     //TODO test for available players sizes
 
@@ -60,17 +86,21 @@ public class StartDraftCommandTest
     @Test
     public void testInvalidCaptainName()
     {
-        command.onCommand(sender, pluginCommand, "", new String[]{"ghowden", "Eluinhost"});
-        command.onCommand(sender, pluginCommand, "", new String[]{"Eluinhost", "ghowden"});
+        setupOnlinePlayers(1);
 
-        verify(sender, times(2)).sendMessage(contains("provide at least 2 captains"));
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0", "player1"});
+        command.onCommand(sender, pluginCommand, "", new String[]{"player1", "player0"});
+
+        verify(sender, times(2)).sendMessage(contains("is not online"));
     }
 
     @Test
     public void testNotEnoughCaptains()
     {
+        setupOnlinePlayers(1);
+
         command.onCommand(sender, pluginCommand, "", new String[]{});
-        command.onCommand(sender, pluginCommand, "", new String[]{"ghowden"});
+        command.onCommand(sender, pluginCommand, "", new String[]{"player0"});
 
         verify(sender, times(2)).sendMessage(contains("provide at least 2 captains"));
     }
@@ -90,10 +120,11 @@ public class StartDraftCommandTest
     @Test
     public void testNoPermission()
     {
+        when(sender.hasPermission("captains.draft.startdraft")).thenReturn(false);
+
         command.onCommand(sender, pluginCommand, "", new String[]{});
 
         verify(sender, times(1)).hasPermission("captains.draft.startdraft");
-
         verify(sender, times(1)).sendMessage(contains("do not have permission"));
         verifyNoMoreInteractions(sender);
         verifyNoMoreInteractions(draftMode);
@@ -102,35 +133,21 @@ public class StartDraftCommandTest
     @Test
     public void testAvailableForPick()
     {
-        mockStatic(Bukkit.class);
+        Player[] players = setupOnlinePlayers(6);
+        for(int i = 0; i < 6; i++) {
+            Player player = players[i];
+            when(player.hasPermission("captains.draft.spectate")).thenReturn(i > 3);
+        }
 
-        Player ok_player_1 = mock(Player.class);
-        when(ok_player_1.hasPermission("captains.draft.spectate")).thenReturn(false);
-        Player ok_player_2 = mock(Player.class);
-        when(ok_player_2.hasPermission("captains.draft.spectate")).thenReturn(false);
-        Player ok_player_3 = mock(Player.class);
-        when(ok_player_3.hasPermission("captains.draft.spectate")).thenReturn(false);
-        Player ok_player_4 = mock(Player.class);
-        when(ok_player_4.hasPermission("captains.draft.spectate")).thenReturn(false);
-        Player not_ok_player_5 = mock(Player.class);
+        List<Player> available = command.availableForPick();
 
-        when(not_ok_player_5.hasPermission("captains.draft.spectate")).thenReturn(true);
-        Player not_ok_player_6 = mock(Player.class);
-        when(not_ok_player_6.hasPermission("captains.draft.spectate")).thenReturn(true);
+        assertThat(available).containsExactly(players[0], players[1], players[2], players[3]);
+        assertThat(available).hasSize(4);
+        assertThat(available).doesNotContain(players[4], players[5]);
 
-        Player[] playerArray = new Player[]{ok_player_1, ok_player_2, ok_player_3, ok_player_4, not_ok_player_5, not_ok_player_6};
-
-        when(Bukkit.getOnlinePlayers()).thenReturn(playerArray);
-
-        List<Player> players = command.availableForPick();
-
-        assertThat(players).containsExactly(ok_player_1, ok_player_2, ok_player_3, ok_player_4);
-        assertThat(players).hasSize(4);
-        assertThat(players).doesNotContain(not_ok_player_5, not_ok_player_6);
-
-        for(Player player : playerArray) {
+        for(Player player : players) {
             verify(player, times(1)).hasPermission("captains.draft.spectate");
-            verifyNoMoreInteractions(ok_player_1);
+            verifyNoMoreInteractions(player);
         }
     }
 
