@@ -44,4 +44,9 @@ public class DraftMode
         //TODO anything we need to force stop draft mode
         isInDraftMode = false;
     }
+
+    public boolean removePick(String name)
+    {
+        return false;
+    }
 }
