@@ -98,7 +98,7 @@ public class StartDraftCommand extends DraftModeCommand
             toRemove = availablePlayers.size() % captainList.size();
             teamSize = (availablePlayers.size() - toRemove) / captainList.size() + 1;
         } else {
-            toRemove = availablePlayers.size() - (captainList.size() * teamSize);
+            toRemove = availablePlayers.size() - (captainList.size() * (teamSize - 1));
 
             if(toRemove < 0) {
                 sender.sendMessage(ChatColor.RED + "There arn't enough people online for teams of that size");
