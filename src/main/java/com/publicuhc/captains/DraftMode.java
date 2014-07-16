@@ -31,6 +31,11 @@ public class DraftMode
         //TODO anything needed to start draft mode
     }
 
+    public void addPick(Player player)
+    {
+        //TODO
+    }
+
     /**
      * Ends draft mode
      */
